@@ -33,7 +33,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
         responder(resp);
       });
     },
-    connect:function(){
+    open:function(){
       device.connect(msg.path, function(connectionId){
         var resp = {};
         if (err) resp.error = err;

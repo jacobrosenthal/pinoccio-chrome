@@ -169,8 +169,8 @@ function waitWifi(port, timeout, done){
 
 window.device = {
   open: open,
-  send:send,
-  programWifi:programWifi,
+  send: send,
+  programWifi: programWifi,
   close: close
 };
 
