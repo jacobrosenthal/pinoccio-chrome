@@ -71,7 +71,7 @@ function send(path, cmds, done){
   var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
-  if (typeof(cmds) === 'String')
+  if (cmds && cmds.constructor !== Array)
     cmds = [cmds];
 
   var cmd;
@@ -8215,7 +8215,6 @@ function listPorts(done){
 
 function bootload(path, url, done){
 
-//pinoccio
 var pageSize = 256;
 var baud = 115200;
 var delay1 = 10; //minimum is 2.5us, so anything over 1 fine?

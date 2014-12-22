@@ -69,7 +69,7 @@ function send(path, cmds, done){
   var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
-  if (typeof(cmds) === 'String')
+  if (cmds && cmds.constructor !== Array)
     cmds = [cmds];
 
   var cmd;
