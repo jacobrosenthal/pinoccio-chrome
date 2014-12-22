@@ -1367,6 +1367,7 @@ module.exports = function (stream, timeout, regexp, callback) {
 }
 
 },{}],5:[function(require,module,exports){
+(function (Buffer){
 var receiveData = require('./receiveData');
 var PROMPTREGEX = require('../lib/statics').PROMPT;
 var SPLITREGEX = require('../lib/statics').SPLIT;
@@ -1387,10 +1388,10 @@ module.exports = function (stream, opt, callback) {
   var cmd = options.cmd || '';
   var echo = options.echo || false;
 
-  cmd = cmd + "\r\n";
+  cmd = cmd + "\n";
 
   // console.log('sending', cmd);
-  stream.write(cmd, function (err) {
+  stream.write(new Buffer(cmd), function (err) {
     if (err) {
       return callback(err);
     }
@@ -1416,7 +1417,8 @@ module.exports = function (stream, opt, callback) {
   });
 }
 
-},{"../lib/statics":6,"./receiveData":4}],6:[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"../lib/statics":6,"./receiveData":4,"buffer":7}],6:[function(require,module,exports){
 module.exports = {
   PROMPT: />\s/,
   SPLIT: /\r\n/
@@ -3741,138 +3743,165 @@ var util = require('util');
 var DATABITS = [7, 8];
 var STOPBITS = [1, 2];
 var PARITY = ['none', 'even', 'mark', 'odd', 'space'];
+var FLOWCONTROLS = ["RTSCTS"];
 
 var _options = {
-	baudrate: 9600,
-	parity: 'none',
-	rtscts: false,
-	databits: 8,
-	stopbits: 1,
-	buffersize: 256
+  baudrate: 9600,
+  parity: 'none',
+  rtscts: false,
+  databits: 8,
+  stopbits: 1,
+  buffersize: 256
 };
 
 function convertOptions(options){
-	switch (options.dataBits) {
-		case 7:
-			options.dataBits = 'seven';
-			break;
-		case 8:
-			options.dataBits = 'eight';
-			break;
-	}
+  switch (options.dataBits) {
+    case 7:
+      options.dataBits = 'seven';
+      break;
+    case 8:
+      options.dataBits = 'eight';
+      break;
+  }
 
-	switch (options.stopBits) {
-		case 1:
-			options.stopBits = 'one';
-			break;
-		case 2:
-			options.stopBits = 'two';
-			break;
-	}
+  switch (options.stopBits) {
+    case 1:
+      options.stopBits = 'one';
+      break;
+    case 2:
+      options.stopBits = 'two';
+      break;
+  }
 
-	switch (options.parity) {
-		case 'none':
-			options.parity = 'no';
-			break;
-	}
+  switch (options.parity) {
+    case 'none':
+      options.parity = 'no';
+      break;
+  }
 
-	return options;
+  return options;
 }
 
 function SerialPort(path, options, openImmediately, callback) {
 
-	EE.call(this);
+  EE.call(this);
 
-	var self = this;
+  var self = this;
 
-	var args = Array.prototype.slice.call(arguments);
+  var args = Array.prototype.slice.call(arguments);
   callback = args.pop();
   if (typeof(callback) !== 'function') {
     callback = null;
   }
 
-	options = (typeof options !== 'function') && options || {};
+  options = (typeof options !== 'function') && options || {};
 
-	openImmediately = (openImmediately === undefined || openImmediately === null) ? true : openImmediately;
+  openImmediately = (openImmediately === undefined || openImmediately === null) ? true : openImmediately;
 
-	callback = callback || function (err) {
+  callback = callback || function (err) {
     if (err) {
       self.emit('error', err);
     }
   };
 
-	var err;
+  var err;
 
-	options.baudRate = options.baudRate || options.baudrate || _options.baudrate;
+  options.baudRate = options.baudRate || options.baudrate || _options.baudrate;
 
-	options.dataBits = options.dataBits || options.databits || _options.databits;
-	if (DATABITS.indexOf(options.dataBits) === -1) {
-		err = new Error('Invalid "databits": ' + options.dataBits);
-		callback(err);
-		return;
-	}
+  options.dataBits = options.dataBits || options.databits || _options.databits;
+  if (DATABITS.indexOf(options.dataBits) === -1) {
+    err = new Error('Invalid "databits": ' + options.dataBits);
+    callback(err);
+    return;
+  }
 
-	options.stopBits = options.stopBits || options.stopbits || _options.stopbits;
-	if (STOPBITS.indexOf(options.stopBits) === -1) {
-		err = new Error('Invalid "stopbits": ' + options.stopbits);
-		callback(err);
-		return;
-	}
+  options.stopBits = options.stopBits || options.stopbits || _options.stopbits;
+  if (STOPBITS.indexOf(options.stopBits) === -1) {
+    err = new Error('Invalid "stopbits": ' + options.stopbits);
+    callback(err);
+    return;
+  }
 
-	options.parity = options.parity || _options.parity;
-	if (PARITY.indexOf(options.parity) === -1) {
-		err = new Error('Invalid "parity": ' + options.parity);
-		callback(err);
-		return;
-	}
+  options.parity = options.parity || _options.parity;
+  if (PARITY.indexOf(options.parity) === -1) {
+    err = new Error('Invalid "parity": ' + options.parity);
+    callback(err);
+    return;
+  }
 
-	if (!path) {
+  if (!path) {
     err = new Error('Invalid port specified: ' + path);
     callback(err);
     return;
   }
 
-	options.bufferSize = options.bufferSize || options.buffersize || _options.buffersize;
+  if (options.flowControl || options.flowcontrol) {
+    var fc = options.flowControl || options.flowcontrol;
 
-	// defaults to chrome.serial if no options.serial passed
-	// inlined instead of on _options to allow mocking global chrome.serial for optional options test
-	options.serial = options.serial || (typeof chrome !== 'undefined' && chrome.serial);
+    if (typeof fc === 'boolean') {
+      options.rtscts = true;
+    } else {
+      fc.forEach(function (flowControl) {
+        var fcup = flowControl.toUpperCase();
+        var idx = FLOWCONTROLS.indexOf(fcup);
+        if (idx < 0) {
+          var err = new Error('Invalid "flowControl": ' + fcup + ". Valid options: " + FLOWCONTROLS.join(", "));
+          callback(err);
+          return;
+        } else {
 
-	if (!options.serial) {
-		throw 'No access to serial ports. Try loading as a Chrome Application.';
-	}
+          // "XON", "XOFF", "XANY", "DTRDTS", "RTSCTS"
+          switch (idx) {
+            case 0: options.rtscts = true; break;
+          }
+        }
+      });
+    }
+  }
 
-	this.options = convertOptions(options);
+  options.bufferSize = options.bufferSize || options.buffersize || _options.buffersize;
 
-	this.options.serial.onReceiveError.addListener(function(info){
+  // defaults to chrome.serial if no options.serial passed
+  // inlined instead of on _options to allow mocking global chrome.serial for optional options test
+  options.serial = options.serial || (typeof chrome !== 'undefined' && chrome.serial);
 
-		switch (info.error) {
+  if (!options.serial) {
+    throw 'No access to serial ports. Try loading as a Chrome Application.';
+  }
 
-			case "disconnected":
-			case "device_lost":
-			case "system_error":
-			  // send notification of disconnect
-			  if (self.options.disconnectedCallback) {
-			    self.options.disconnectedCallback(err);
-			  } else {
-			    self.emit("disconnect", err);
-			  }
-			  self.emit("close");
-			  self.removeAllListeners();
-			  break;
-			case "timeout":
-				break;
-		}
+  this.options = convertOptions(options);
 
-	});
-	
-	this.path = path;
+  this.options.serial.onReceiveError.addListener(function(info){
 
-	if (openImmediately) {
-		process.nextTick(function () {
+    switch (info.error) {
+
+      case "disconnected":
+      case "device_lost":
+      case "system_error":
+        err = new Error("Disconnected");
+        // send notification of disconnect
+        if (self.options.disconnectedCallback) {
+          self.options.disconnectedCallback(err);
+        } else {
+          self.emit("disconnect", err);
+        }
+        this.connectionId = -1;
+        self.emit("close");
+        self.removeAllListeners();
+        break;
+      case "timeout":
+        break;
+    }
+
+  });
+  
+  this.path = path;
+
+  if (openImmediately) {
+    process.nextTick(function () {
       self.open(callback);
     });
-	}
+  }
 }
 
 util.inherits(SerialPort, EE);
@@ -3880,161 +3909,188 @@ util.inherits(SerialPort, EE);
 SerialPort.prototype.connectionId = -1;
 
 SerialPort.prototype.open = function (callback) {
-	this.options.serial.connect(this.path, {bitrate: parseInt(this.options.baudrate, 10)}, this.proxy('onOpen', callback));
+  var options = {
+    bitrate: parseInt(this.options.baudrate, 10),
+    dataBits: this.options.databits,
+    parityBit: this.options.parity,
+    stopBits: this.options.stopbits,
+    ctsFlowControl: this.options.rtscts
+  };
+
+  this.options.serial.connect(this.path, options, this.proxy('onOpen', callback));
 };
 
 SerialPort.prototype.onOpen = function (callback, openInfo) {
 
-	this.connectionId = openInfo.connectionId;
-	if (this.connectionId == -1) {
-		this.emit('error', 'Could not open port.');
-		return;
-	}
+  this.connectionId = openInfo.connectionId;
+  if (this.connectionId == -1) {
+    this.emit('error', 'Could not open port.');
+    return;
+  }
 
-	this.emit('open', openInfo);
+  this.emit('open', openInfo);
 
-	typeof callback == 'function' && callback(chrome.runtime.lastError, openInfo);
+  typeof callback == 'function' && callback(chrome.runtime.lastError, openInfo);
 
-	this.options.serial.onReceive.addListener(this.proxy('onRead'));
+  this.options.serial.onReceive.addListener(this.proxy('onRead'));
 };
 
 SerialPort.prototype.onRead = function (readInfo) {
-	if (readInfo && this.connectionId == readInfo.connectionId) {
+  if (readInfo && this.connectionId == readInfo.connectionId) {
 
-		if(this.options.dataCallback){
-			this.options.dataCallback(toBuffer(readInfo.data));
-		}else{
-			this.emit('data', toBuffer(readInfo.data));
-			this.emit('dataString', ab2str(readInfo.data));
-		}
+    if(this.options.dataCallback){
+      this.options.dataCallback(toBuffer(readInfo.data));
+    }else{
+      this.emit('data', toBuffer(readInfo.data));
+    }
 
-	}
+  }
 }
 
 SerialPort.prototype.write = function (buffer, callback) {
-	if (typeof callback != 'function') { callback = function() {}; }
+  if (typeof callback != 'function') { callback = function() {}; }
 
-	//Make sure its not a browserify faux Buffer.
-	if (buffer instanceof ArrayBuffer == false) {
-		buffer = buffer2ArrayBuffer(buffer);
-	}
+  if ( this.connectionId<0 ) { return callback(new Error("Serialport not open.")); }
 
-	this.options.serial.send(this.connectionId, buffer, function(info){
-		callback(chrome.runtime.lastError, info);
-	});
+  //Make sure its not a browserify faux Buffer.
+  if (buffer instanceof ArrayBuffer == false) {
+    buffer = buffer2ArrayBuffer(buffer);
+  }
+
+  this.options.serial.send(this.connectionId, buffer, function(info){  
+    callback(chrome.runtime.lastError, info);
+  });
 };
 
 SerialPort.prototype.writeString = function (string, callback) {
-	this.write(str2ab(string), callback);
+  this.write(str2ab(string), callback);
 };
 
 SerialPort.prototype.close = function (callback) {
-	this.options.serial.disconnect(this.connectionId, this.proxy('onClose', callback));
+  if ( this.connectionId<0 ) { return callback(new Error("Serialport not open.")); }
+
+  this.options.serial.disconnect(this.connectionId, this.proxy('onClose', callback));
 };
 
 SerialPort.prototype.onClose = function (callback, result) {
-	this.connectionId = -1;
-	this.emit('close');
+  this.connectionId = -1;
+  this.emit('close');
 
-	this.removeAllListeners();
+  this.removeAllListeners();
 
-	typeof callback == 'function' && callback(chrome.runtime.lastError, result);
+  typeof callback == 'function' && callback(chrome.runtime.lastError, result);
 };
 
 SerialPort.prototype.flush = function (callback) {
+  if ( this.connectionId<0 ) { return callback(new Error("Serialport not open.")); }
 
+  this.options.serial.flush(this.connectionId, function(err){
+    if (err) {
+      if (callback) {
+        callback(err, result);
+      } else {
+        self.emit('error', err);
+      }
+    } else {
+      callback(err, result);
+    }
+  });
+  
 };
 
+SerialPort.prototype.drain = function (callback) {
+  if ( this.connectionId<0 ) { return callback(new Error("Serialport not open.")); }
+
+  callback();
+};
+
+
 SerialPort.prototype.proxy = function () {
-	var self = this;
-	var proxyArgs = [];
+  var self = this;
+  var proxyArgs = [];
 
-	//arguments isnt actually an array.
-	for (var i = 0; i < arguments.length; i++) {
-			proxyArgs[i] = arguments[i];
-	}
+  //arguments isnt actually an array.
+  for (var i = 0; i < arguments.length; i++) {
+      proxyArgs[i] = arguments[i];
+  }
 
-	var functionName = proxyArgs.splice(0, 1)[0];
+  var functionName = proxyArgs.splice(0, 1)[0];
 
-	var func = function() {
-		var funcArgs = [];
-		for (var i = 0; i < arguments.length; i++) {
-				funcArgs[i] = arguments[i];
-		}
-		var allArgs = proxyArgs.concat(funcArgs);
+  var func = function() {
+    var funcArgs = [];
+    for (var i = 0; i < arguments.length; i++) {
+        funcArgs[i] = arguments[i];
+    }
+    var allArgs = proxyArgs.concat(funcArgs);
 
-		self[functionName].apply(self, allArgs);
-	}
+    self[functionName].apply(self, allArgs);
+  }
 
-	return func;
+  return func;
 }
 
 SerialPort.prototype.set = function (options, callback) {
-	this.options.serial.setControlSignals(this.connectionId, options, function(result){
-		callback(chrome.runtime.lastError, result);
-	});
+  this.options.serial.setControlSignals(this.connectionId, options, function(result){
+    callback(chrome.runtime.lastError, result);
+  });
 };
 
 function SerialPortList(callback) {
-	if (typeof chrome != 'undefined' && chrome.serial) {
-		chrome.serial.getDevices(function(ports) {
-			var portObjects = Array(ports.length);
-			for (var i = 0; i < ports.length; i++) {
-				portObjects[i] = {
-					comName: ports[i].path,
-					manufacturer: '',
-					serialNumber: '',
-					pnpId: '',
-					locationId: '',
-					vendorId: '',
-					productId: ''
-				};
-			}
-			callback(chrome.runtime.lastError, portObjects);
-		});
-	} else {
-		callback('No access to serial ports. Try loading as a Chrome Application.', null);
-	}
+  if (typeof chrome != 'undefined' && chrome.serial) {
+    chrome.serial.getDevices(function(ports) {
+      var portObjects = Array(ports.length);
+      for (var i = 0; i < ports.length; i++) {
+        portObjects[i] = {
+          comName: ports[i].path,
+          manufacturer: '',
+          serialNumber: '',
+          pnpId: '',
+          locationId: '',
+          vendorId: '',
+          productId: ''
+        };
+      }
+      callback(chrome.runtime.lastError, portObjects);
+    });
+  } else {
+    callback('No access to serial ports. Try loading as a Chrome Application.', null);
+  }
 }
 
 // Convert string to ArrayBuffer
 function str2ab(str) {
-	var buf = new ArrayBuffer(str.length);
-	var bufView = new Uint8Array(buf);
-	for (var i = 0; i < str.length; i++) {
-		bufView[i] = str.charCodeAt(i);
-	}
-	return buf;
-}
-
-function ab2str(buf) {
-  return String.fromCharCode.apply(null, new Uint16Array(buf));
+  var buf = new ArrayBuffer(str.length);
+  var bufView = new Uint8Array(buf);
+  for (var i = 0; i < str.length; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
 }
 
 // Convert buffer to ArrayBuffer
 function buffer2ArrayBuffer(buffer) {
-	var buf = new ArrayBuffer(buffer.length);
-	var bufView = new Uint8Array(buf);
-	for (var i = 0; i < buffer.length; i++) {
-		bufView[i] = buffer[i];
-	}
-	return buf;
+  var buf = new ArrayBuffer(buffer.length);
+  var bufView = new Uint8Array(buf);
+  for (var i = 0; i < buffer.length; i++) {
+    bufView[i] = buffer[i];
+  }
+  return buf;
 }
 
 function toBuffer(ab) {
-	var buffer = new Buffer(ab.byteLength);
-	var view = new Uint8Array(ab);
-	for (var i = 0; i < buffer.length; ++i) {
-			buffer[i] = view[i];
-	}
-	return buffer;
+  var buffer = new Buffer(ab.byteLength);
+  var view = new Uint8Array(ab);
+  for (var i = 0; i < buffer.length; ++i) {
+      buffer[i] = view[i];
+  }
+  return buffer;
 }
 
 module.exports = {
-	SerialPort: SerialPort,
-	list: SerialPortList,
-	buffer2ArrayBuffer: buffer2ArrayBuffer,
-	used: [] //TODO: Populate this somewhere.
+  SerialPort: SerialPort,
+  list: SerialPortList,
+  buffer2ArrayBuffer: buffer2ArrayBuffer,
+  used: [] //TODO: Populate this somewhere.
 };
 
 }).call(this,require('_process'),require("buffer").Buffer)
