@@ -5,14 +5,14 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
   	  responder(chrome.runtime.getManifest());
   	},
     bootload:function(){
-      programmer.bootload(msg.path, msg.url, function(error) {
+      programmer.bootload(msg.path, msg.url, function(err) {
         var resp = {};
         if (err) resp.error = err;
         responder(resp);
       });
     },
     list:function(){
-      programmer.listPorts(function(error, ports) {
+      programmer.listPorts(function(err, ports) {
         var resp = {};
         if (err) resp.error = err;
         resp.ports = ports;
@@ -20,14 +20,14 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
   	},
   	send:function(){
-      device.send(msg.path, msg.commands, function(error) {
+      device.send(msg.path, msg.commands, function(err) {
         var resp = {};
         if (err) resp.error = err;
         responder(resp);
       });
   	},
     programWifi:function(){
-      device.programWifi(msg.path, msg.ssid, msg.pass, function(error) {
+      device.programWifi(msg.path, msg.ssid, msg.pass, function(err) {
         var resp = {};
         if (err) resp.error = err;
         responder(resp);
@@ -43,7 +43,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 
     },
     close:function(){
-      device.close(msg.connectionId, function(error){
+      device.close(msg.connectionId, function(err){
         var resp = {};
         if (err) resp.error = err;
         responder(resp);
