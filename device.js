@@ -43,8 +43,7 @@ function open(path, done){
 
       Bitlash.send(port, function(err){
         if(err){
-          port.close();
-          done(error);
+          done(err);
         }
         console.log("device synced", err);
 
