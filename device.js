@@ -50,7 +50,7 @@ function open(path, done){
 
         serialPorts[path] = port;
 
-        done(null);
+        done();
       });
 
     });
