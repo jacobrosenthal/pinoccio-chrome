@@ -33,7 +33,7 @@ function open(path, done){
     port.on('error', function (err) {
       console.log("device error", err);
       port.close();
-      serialPorts.splice(connectionId, 1);
+      delete serialPorts[path];
     });
 
     port.on('close', function () {
@@ -63,7 +63,7 @@ function close(path, done){
   if (!port) { return done(new Error("Device not open")); }
 
   port.close();
-  delete serialPorts[path]
+  delete serialPorts[path];
 
 }
 
