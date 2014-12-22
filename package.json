@@ -1,22 +1,25 @@
 {
-  "name": "browserdude",
-  "version": "0.1.1",
-  "description": "Upload to Arduino from Chrome",
+  "name": "revent",
+  "version": "0.0.1",
+  "description": "revent",
   "main": "index.js",
   "dependencies": {
+    "async": "^0.9.0",
     "chrome-serialport": "^2.0.0",
     "intel-hex": "^0.1.1",
-    "stk500": "^1.0.2"
+    "rest": "^1.2.0",
+    "stk500": "jacobrosenthal/js-stk500v1#v2",
+    "bitlash-js": "jacobrosenthal/bitlash-js"
   },
   "devDependencies": {
     "browserify": "^7.0.0",
     "brfs": "^1.2.0",
-    "serialport-transform": "^1.0.2"
+    "serialport-transform": "^1.0.2",
+    "serialport": "^1.4.9"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t brfs -t serialport-transform index.js -o bundle.js"
+    "build": "browserify -t brfs -t serialport-transform device.js programmerv2.js -o bundle.js"
   },
-  "author": "Jacob Rosenthal",
-  "license": "MIT"
+  "author": "Jacob Rosenthal"
 }

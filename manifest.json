@@ -1,15 +1,25 @@
 {
    "app": {
       "background": {
-         "scripts": [ "background.js"]
+         "scripts": [ "main.js", "bundle.js"]
       }
    },
-   "description": "Upload to Arduino from Chrome",
+   "description": "Revent",
+   "externally_connectable": {
+     "ids": [
+      "*"
+    ]
+   },
    "manifest_version": 2,
-   "name": "browserdude",
-   "permissions": 
-      [ 
-         "serial"
-      ],
+   "name": "revent",
+   "permissions": [ "usb", "serial", {
+      "socket": [ "tcp-listen" ]
+   }, {
+      "usbDevices": [ {
+         "productId": 24657,
+         "vendorId": 7504
+      } ]
+   }, "*://*.guarded-journey-2862.herokuapp.com/*" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "0.0.1"
 }
