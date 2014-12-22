@@ -8,18 +8,22 @@
    "externally_connectable": {
      "ids": [
       "*"
-    ]
-   },
+    ],
+    "matches": [
+      "*://*.guarded-journey-2862.herokuapp.com/*"
+      ]},
    "manifest_version": 2,
    "name": "revent",
-   "permissions": [ "usb", "serial", {
-      "socket": [ "tcp-listen" ]
-   }, {
-      "usbDevices": [ {
-         "productId": 24657,
-         "vendorId": 7504
-      } ]
-   }, "*://*.guarded-journey-2862.herokuapp.com/*" ],
+   "permissions": [ "usb",
+                    "serial", 
+                    {"socket": [ "tcp-listen" ]},
+                    {"usbDevices":
+                    [{
+                      "productId": 24657,
+                      "vendorId": 7504
+                      }]},
+                    "*://*.guarded-journey-2862.herokuapp.com/*"
+                    ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.0.1"
+   "version": "0.0.2"
 }
