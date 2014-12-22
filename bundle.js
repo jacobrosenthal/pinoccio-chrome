@@ -10,17 +10,17 @@ if(typeof window === 'undefined') window = this;
 
 (function() {
 
-var serialPorts = [];
+var serialPorts = {};
 
-function connect(path, done){
+function open(path, done){
   //return an error if path already assingned to a port?
 
   //add juggling to take a board object as argument
   var board = {
-    name: "Arduino Uno",
+    name: "Pinoccio",
     baud: 115200,
-    signature: new Buffer([0x1e, 0x95, 0x0f]),
-    pageSize: 128,
+    signature: new Buffer([0x1e, 0xa8, 0x02]),
+    pageSize: 256,
     timeout: 400
   };
 
@@ -40,11 +40,6 @@ function connect(path, done){
       console.log("device closed");
     });
 
-    port.on('data', function (data) {
-      console.log("device received", data);
-      console.log(data.toString());
-    });
-
     port.on('open', function () {
       console.log("device opened");
 
@@ -55,41 +50,25 @@ function connect(path, done){
         }
         console.log("device synced", err);
 
-        var connectionId = serialPorts.push(port);
+        serialPorts[path] = port;
 
-        done(null, connectionId-1);
+        done(null);
       });
 
     });
 }
 
-function close(connectionId, done){
-  var port = serialPorts[connectionId];
+function close(path, done){
+  var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
   port.close();
-  serialPorts.splice(connectionId, 1);
-
-  port.on("close", function(err){
-      connect('/dev/tty.usbmodem1411', function(err){
-        console.log("connected", err);
-      });
-  });
+  delete serialPorts[path]
 
 }
 
-// function write(connectionId, cmds, done){
-//   var port = serialPorts[connectionId];
-//   if (!port) { return done(new Error("Device not open")); }
-
-//   port.write(new Buffer("\n"), function(err){
-//     console.log("written", err)
-//   });
-//     done(null);
-// }
-
-function send(connectionId, cmds, done){
-  var port = serialPorts[connectionId];
+function send(path, cmds, done){
+  var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
   if (typeof(cmds) === 'String')
@@ -101,8 +80,6 @@ function send(connectionId, cmds, done){
     function() {
       //shift undefined value if empty?
       cmd = cmds.shift();
-      console.log(cmd);
-      console.log(typeof cmd === 'object');
       return (typeof cmd === 'object'); 
     },
     function(cbStep) {
@@ -129,8 +106,8 @@ function send(connectionId, cmds, done){
     });
 }
 
-function programWifi(connectionId, ssid, pass, done){
-  var port = serialPorts[connectionId];
+function programWifi(path, ssid, pass, done){
+  var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
   var self = this;
@@ -193,7 +170,7 @@ function waitWifi(port, timeout, done){
 }
 
 window.device = {
-  connect: connect,
+  open: open,
   send:send,
   programWifi:programWifi,
   close: close
@@ -205,14 +182,15 @@ window.device = {
 if(process && process.argv && process.argv[2] && process.argv[3])
 {
   var self = this;
-  this.device.connect(process.argv[2], function(err){
+  this.device.open(process.argv[2], function(err){
     console.log(err);
 
     var opt = {
       timeout: 10000,
       cmd: process.argv[3]
     };
-    self.device.send(0, opt, function(err){
+
+    self.device.send(process.argv[2], opt, function(err){
       console.log(err);
     });
   });
@@ -8237,6 +8215,7 @@ function listPorts(done){
 
 function bootload(path, url, done){
 
+//pinoccio
 var pageSize = 256;
 var baud = 115200;
 var delay1 = 10; //minimum is 2.5us, so anything over 1 fine?
