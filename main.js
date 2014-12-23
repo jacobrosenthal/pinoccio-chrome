@@ -1,17 +1,12 @@
-chrome.runtime.onConnectExternal.addListener(function(port) {
-  console.log(port);
-  console.log("gone one");
-
-  port.onMessageExternal.addListener(function(msg) {
-    console.log("messageExternal", msg);
-  });
-
+chrome.runtime.onConnect.addListener(function(port) {
+  console.assert(port.name == "knockknock");
   port.onMessage.addListener(function(msg) {
-    console.log("message", msg);
-  });
-
-  port.onDisconnect.addListener(function(msg) {
-    console.log("disconnected", msg);
+    if (msg.joke == "Knock knock")
+      port.postMessage({question: "Who's there?"});
+    else if (msg.answer == "Madame")
+      port.postMessage({question: "Madame who?"});
+    else if (msg.answer == "Madame... Bovary")
+      port.postMessage({question: "I don't get it."});
   });
 });
 
@@ -45,6 +40,15 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
   	},
     batch:function(){
+      device.batch(msg.path, msg.cmd, function(err, data) {
+        var resp = {};
+        if (err) resp.error = err;
+        if (data) resp.data = data;
+        responder(resp);
+      });
+    },
+    //beware, opens its own port
+    batch2:function(){
       device.batch(msg.path, msg.cmd, function(err, data) {
         var resp = {};
         if (err) resp.error = err;

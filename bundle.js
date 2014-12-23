@@ -12,9 +12,6 @@ if(typeof window === 'undefined') window = this;
 
 var serialPorts = {};
 
-function open(path, done){
-  //return an error if path already assingned to a port?
-
   //add juggling to take a board object as argument
   var board = {
     name: "Pinoccio",
@@ -23,6 +20,9 @@ function open(path, done){
     pageSize: 256,
     timeout: 400
   };
+
+function open(path, done){
+  //return an error if path already assingned to a port?
 
   var port = new SerialPort.SerialPort(path, {baudrate: board.baud});
 
@@ -101,7 +101,7 @@ function batch(path, cmds, done){
         cbStep();
       });
     },
-    function(err, ret) {
+    function(err) {
 
       //check why it failed
       //some types of errors mean need to invalidate connection
@@ -117,7 +117,7 @@ function batch(path, cmds, done){
       //invalid command 
       //Prompt not at end
       console.log("send complete", err);
-      done(err, ret);
+      done(err, results);
     });
 }
 
@@ -183,6 +183,72 @@ function waitWifi(port, timeout, done){
       done(err);
     });
 }
+
+function batch2(path, cmds, done){
+
+  var port = new SerialPort.SerialPort(path, {baudrate: board.baud});
+
+    port.on('disconnect', function (err) {
+      console.log("device disconnected", err);
+    });
+
+    port.on('error', function (err) {
+      console.log("device error", err);
+      port.close();
+      delete serialPorts[path];
+    });
+
+    port.on('close', function () {
+      console.log("device closed");
+    });
+
+    port.on('open', function () {
+      console.log("device opened");
+
+    if (cmds && cmds.constructor !== Array)
+      cmds = [cmds];
+
+    var cmd;
+    var results = [];
+
+    async.whilst (
+      function() {
+        //shift undefined value if empty?
+        cmd = cmds.shift();
+        return (typeof cmd === 'object'); 
+      },
+      function(cbStep) {
+        Bitlash.send(port, cmd, function(err, data){
+          if(!data){
+            data = [];
+          } 
+          results.push(data);
+          cbStep();
+        });
+      },
+      function(err, ret) {
+
+        //check why it failed
+        //some types of errors mean need to invalidate connection
+        //any serial errors
+        //timeout probably
+        //do I have a way to check the type of error or do you just check string equality?
+        // if(something){
+        //   port.close();
+        //   serialPorts.splice(connectionId, 1);
+        // }
+
+        //but not
+        //invalid command 
+        //Prompt not at end
+        console.log("send complete", err);
+        done(err, results);
+      });
+
+    });
+
+}
+
 
 window.device = {
   open: open,
