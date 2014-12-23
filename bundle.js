@@ -242,6 +242,7 @@ function batch2(path, cmds, done){
         //invalid command 
         //Prompt not at end
         console.log("send complete", err);
+        port.close();
         done(err, results);
       });
 

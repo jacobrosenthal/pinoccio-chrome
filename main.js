@@ -1,4 +1,5 @@
-chrome.runtime.onConnect.addListener(function(port) {
+// For long-lived connections:
+chrome.runtime.onConnectExternal.addListener(function(port) {
   console.assert(port.name == "knockknock");
   port.onMessage.addListener(function(msg) {
     if (msg.joke == "Knock knock")
