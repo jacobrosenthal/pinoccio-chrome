@@ -64,7 +64,17 @@ function close(path, done){
 
 }
 
-function send(path, cmds, done){
+function send(path, cmd, done){
+  var port = serialPorts[path];
+  if (!port) { return done(new Error("Device not open")); }
+
+  Bitlash.send(port, cmd, function(err, data){
+    done(err, data);
+  });
+
+}
+
+function batch(path, cmds, done){
   var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
@@ -72,6 +82,7 @@ function send(path, cmds, done){
     cmds = [cmds];
 
   var cmd;
+  var results = [];
 
   async.whilst (
     function() {
@@ -80,10 +91,15 @@ function send(path, cmds, done){
       return (typeof cmd === 'object'); 
     },
     function(cbStep) {
-      console.log("command", cmd);
-      Bitlash.send(port, cmd, cbStep);
+      Bitlash.send(port, cmd, function(err, data){
+        if(!data){
+          data = [];
+        } 
+        results.push(data);
+        cbStep();
+      });
     },
-    function(err) {
+    function(err, ret) {
 
       //check why it failed
       //some types of errors mean need to invalidate connection
@@ -99,7 +115,7 @@ function send(path, cmds, done){
       //invalid command 
       //Prompt not at end
       console.log("send complete", err);
-      done(err);
+      done(err, ret);
     });
 }
 
@@ -187,8 +203,8 @@ if(process && process.argv && process.argv[2] && process.argv[3])
       cmd: process.argv[3]
     };
 
-    self.device.send(process.argv[2], opt, function(err){
-      console.log(err);
+    self.device.send(process.argv[2], opt, function(err, data){
+      console.log(err, data);
     });
   });
 }

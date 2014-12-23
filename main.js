@@ -20,12 +20,21 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
   	},
   	send:function(){
-      device.send(msg.path, msg.commands, function(err) {
+      device.send(msg.path, msg.cmd, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
+        if (data) resp.data = data;
         responder(resp);
       });
   	},
+    batch:function(){
+      device.batch(msg.path, msg.cmd, function(err, data) {
+        var resp = {};
+        if (err) resp.error = err;
+        if (data) resp.data = data;
+        responder(resp);
+      });
+    },
     programWifi:function(){
       device.programWifi(msg.path, msg.ssid, msg.pass, function(err) {
         var resp = {};
