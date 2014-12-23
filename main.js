@@ -1,7 +1,7 @@
 // For long-lived connections:
 chrome.runtime.onConnectExternal.addListener(function(port) {
   console.assert(port.name == "knockknock");
-  port.onMessage.addListener(function(msg) {
+  port.onMessageExternal.addListener(function(msg) {
     if (msg.joke == "Knock knock")
       port.postMessage({question: "Who's there?"});
     else if (msg.answer == "Madame")
@@ -50,7 +50,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     //beware, opens its own port
     batch2:function(){
-      device.batch(msg.path, msg.cmd, function(err, data) {
+      device.batch2(msg.path, msg.cmd, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;

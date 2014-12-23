@@ -255,7 +255,9 @@ window.device = {
   open: open,
   send: send,
   programWifi: programWifi,
-  close: close
+  close: close,
+  batch: batch,
+  batch2: batch2
 };
 
 })(window);
