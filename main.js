@@ -1,3 +1,20 @@
+chrome.runtime.onConnectExternal.addListener(function(port) {
+  console.log(port);
+  console.log("gone one");
+
+  port.onMessageExternal.addListener(function(msg) {
+    console.log("messageExternal", msg);
+  });
+
+  port.onMessage.addListener(function(msg) {
+    console.log("message", msg);
+  });
+
+  port.onDisconnect.addListener(function(msg) {
+    console.log("disconnected", msg);
+  });
+});
+
 chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 
   var cmds = {
