@@ -6,8 +6,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       resp.data = chrome.runtime.getManifest();
       responder(resp);
     },
-    makeTroop:function(){
-      device.makeTroop(msg.path, msg.troop, function(err, data) {
+    setTroop:function(){
+      device.setTroop(msg.path, msg.troop, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -21,7 +21,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
         responder(resp);
       });
     },
-    list:function(){
+    listPorts:function(){
       device.listPorts(function(err, data) {
         var resp = {};
         if (err) resp.error = err;
@@ -30,7 +30,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
     },
     send:function(){
-      device.send(msg.path, msg.cmd, function(err, data) {
+      device.send(msg.path, msg.cmds, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -39,7 +39,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     //beware, opens its own port
     statelessSend:function(){
-      device.statelessSend(msg.path, msg.cmd, function(err, data) {
+      device.statelessSend(msg.path, msg.options, msg.cmds, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -70,7 +70,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 
     },
     close:function(){
-      device.close(msg.connectionId, function(err){
+      device.close(msg.path, function(err){
         var resp = {};
         if (err) resp.error = err;
         responder(resp);

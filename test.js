@@ -1,6 +1,20 @@
 var async = require('async');
 var Device = require('./device');
+var pinoccio = require('pinoccio');
 
+var api = pinoccio( {'token': '413b9ba1ca6311a27f53f6346ae7170b',
+  'api': 'https://api1.pinocc.io'});
+
+function getTroop(name, done){
+
+  api.rest({url:'/v1/troop', method:'POST'},function(err, results){
+    if(err) {
+      return done(err);
+    }
+
+    done(null, results);
+  });
+}
 
 go(function(err){
       if(err) {
@@ -142,9 +156,19 @@ function go(done){
       //program open/close etc commands
     // },
     function(cbStep){
-      console.log('making troop');
+      console.log('getting troop');
       //todo save returned troop data to databse
-      Device.makeTroop(port, '', cbStep);
+      getTroop('', function(err, results){
+        if(err){
+          return cbStep(err);
+        }
+        troop = results;
+        cbStep();
+      });
+    },
+    function(cbStep){
+      console.log('setting troop');
+      Device.setTroop(port, troop, cbStep);
     }
   ],
   function(err) {

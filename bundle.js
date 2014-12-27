@@ -13,7 +13,7 @@ var util = require('util');
   troop object with id and token
   returns error
 */
-function makeTroop(port, troop, done){
+function setTroop(port, troop, done){
 
   async.series([
 
@@ -381,7 +381,7 @@ module.exports = {
   programWifi: programWifi,
   open: open,
   send: send,
-  makeTroop: makeTroop,
+  setTroop: setTroop,
   bootload:bootload,
   listPorts:listPorts,
   statelessSend:statelessSend
@@ -455,11 +455,11 @@ if(typeof window === 'undefined') window = this;
     Device.findWifi(port, timeout, done);
   }
 
-  function makeTroop(path, name, done){
+  function setTroop(path, troop, done){
     var port = serialPorts[path];
     if (!port) { return done(new Error('Device not open')); }
 
-    Device.makeTroop(port, name, done);
+    Device.setTroop(port, troop, done);
   }
 
   window.device = {
@@ -469,7 +469,7 @@ if(typeof window === 'undefined') window = this;
     close: close,
     findWifi: findWifi,
     programWifi: programWifi,
-    makeTroop:makeTroop,
+    setTroop:setTroop,
     bootload: Device.bootload,
     listPorts: Device.listPorts
   };

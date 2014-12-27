@@ -64,11 +64,11 @@ if(typeof window === 'undefined') window = this;
     Device.findWifi(port, timeout, done);
   }
 
-  function makeTroop(path, name, done){
+  function setTroop(path, troop, done){
     var port = serialPorts[path];
     if (!port) { return done(new Error('Device not open')); }
 
-    Device.makeTroop(port, name, done);
+    Device.setTroop(port, troop, done);
   }
 
   window.device = {
@@ -78,7 +78,7 @@ if(typeof window === 'undefined') window = this;
     close: close,
     findWifi: findWifi,
     programWifi: programWifi,
-    makeTroop:makeTroop,
+    setTroop:setTroop,
     bootload: Device.bootload,
     listPorts: Device.listPorts
   };

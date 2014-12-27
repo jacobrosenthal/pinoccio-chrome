@@ -11,7 +11,7 @@ var util = require('util');
   troop object with id and token
   returns error
 */
-function makeTroop(port, troop, done){
+function setTroop(port, troop, done){
 
   async.series([
 
@@ -379,7 +379,7 @@ module.exports = {
   programWifi: programWifi,
   open: open,
   send: send,
-  makeTroop: makeTroop,
+  setTroop: setTroop,
   bootload:bootload,
   listPorts:listPorts,
   statelessSend:statelessSend
