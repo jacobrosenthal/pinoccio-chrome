@@ -14,34 +14,34 @@ chrome.runtime.onConnectExternal.addListener(function(port) {
 chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 
   var cmds = {
-  	getManifest:function(){
-  	  responder(chrome.runtime.getManifest());
-  	},
+    getManifest:function(){
+      responder(chrome.runtime.getManifest());
+    },
+    makeTroop:function(){
+      device.makeTroop(msg.path, msg.name, function(err, data) {
+        var resp = {};
+        if (err) resp.error = err;
+        if (data) resp.data = data;
+        responder(resp);
+      });
+    },
     bootload:function(){
-      programmer.bootload(msg.path, msg.url, function(err) {
+      device.bootload(msg.path, msg.url, function(err) {
         var resp = {};
         if (err) resp.error = err;
         responder(resp);
       });
     },
     list:function(){
-      programmer.listPorts(function(err, ports) {
+      device.listPorts(function(err, ports) {
         var resp = {};
         if (err) resp.error = err;
         resp.ports = ports;
         responder(resp);
       });
-  	},
-  	send:function(){
+    },
+    send:function(){
       device.send(msg.path, msg.cmd, function(err, data) {
-        var resp = {};
-        if (err) resp.error = err;
-        if (data) resp.data = data;
-        responder(resp);
-      });
-  	},
-    batch:function(){
-      device.batch(msg.path, msg.cmd, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -49,8 +49,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
     },
     //beware, opens its own port
-    batch2:function(){
-      device.batch2(msg.path, msg.cmd, function(err, data) {
+    statelessSend:function(){
+      device.statelessSend(msg.path, msg.cmd, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -61,6 +61,14 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.programWifi(msg.path, msg.ssid, msg.pass, function(err) {
         var resp = {};
         if (err) resp.error = err;
+        responder(resp);
+      });
+    },
+    findWifi:function(){
+      device.findWifi(msg.path, msg.timeout, function(err, data) {
+        var resp = {};
+        if (err) resp.error = err;
+        if (data) resp.data = data;
         responder(resp);
       });
     },
