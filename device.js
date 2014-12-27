@@ -27,7 +27,7 @@ function setTroop(port, troop, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.config(1,' + troop.troopId + ', 20)'
+        cmd: 'mesh.config(1, ' + troop.id + ', 20)'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -152,7 +152,6 @@ function statelessSend(path, options, cmds, done){
       port.close();
     });
 
-    console.log('sending', cmds);
     send(port, cmds, function(err, results){
       self.error = err;
       self.results = results;
@@ -370,7 +369,15 @@ function waitWifi(port, timeout, done){
       });
     },
     function(err) {
-      done(err);
+      if(err){
+        return done(err);
+      }
+
+      if(timedout){
+        return done(new Error('timed out'));
+      }
+
+      done();
     });
 }
 
