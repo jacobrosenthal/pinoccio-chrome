@@ -27,12 +27,8 @@ function open(path, done){
       delete serialPorts[path];
     });
 
-    port.on('close', function () {
-      console.log(path, "closed");
-    });
-
     serialPorts[path] = port;
-
+    done();
   });
 }
 
@@ -40,9 +36,13 @@ function close(path, done){
   var port = serialPorts[path];
   if (!port) { return done(new Error("Device not open")); }
 
-  port.close();
-  delete serialPorts[path];
+  port.on('close', function () {
+    console.log(path, "closed");
+    delete serialPorts[path];
+    done();
+  });
 
+  port.close();
 }
 
 function send(path, cmds, done){
@@ -58,7 +58,6 @@ function programWifi(path, ssid, pass, done){
 
   Device.programWifi(port, ssid, pass, done);
 }
-
 
 function findWifi(path, timeout, done){
   var port = serialPorts[path];
@@ -81,7 +80,9 @@ window.device = {
   close: close,
   findWifi: findWifi,
   programWifi: programWifi,
-  makeTroop:makeTroop
+  makeTroop:makeTroop,
+  bootload: Device.bootload,
+  listPorts: Device.listPorts
 };
 
 })(window);
