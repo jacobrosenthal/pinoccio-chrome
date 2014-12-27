@@ -5,11 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "async": "^0.9.0",
+    "bitlash-js": "jacobrosenthal/bitlash-js",
     "chrome-serialport": "jacobrosenthal/browser-serialport",
     "intel-hex": "^0.1.1",
     "rest": "^1.2.0",
-    "stk500": "jacobrosenthal/js-stk500v1#v2",
-    "bitlash-js": "jacobrosenthal/bitlash-js"
+    "stk500": "jacobrosenthal/js-stk500v1#v2"
   },
   "devDependencies": {
     "browserify": "^7.0.0",
@@ -19,7 +19,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t brfs -t serialport-transform device.js -o bundle.js"
+    "build": "browserify -t brfs -t serialport-transform index.js device.js -o bundle.js"
   },
   "author": "Jacob Rosenthal"
 }

@@ -7,7 +7,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       responder(resp);
     },
     makeTroop:function(){
-      device.makeTroop(msg.path, msg.name, function(err, data) {
+      device.makeTroop(msg.path, msg.troop, function(err, data) {
         var resp = {};
         if (err) resp.error = err;
         if (data) resp.data = data;
@@ -79,7 +79,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
   };
 
   if (!cmds.hasOwnProperty(msg.op)) {
-    return responder({error:"Unknown op"});
+    return responder({error:'Unknown op'});
   }
 
   cmds[msg.op]();
@@ -88,10 +88,10 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 });
 
 chrome.app.runtime.onLaunched.addListener(function(data) {
-  console.log("We launched");
+  console.log('We launched');
 
   var a = document.createElement('a');
-  a.href = "http://guarded-journey-2862.herokuapp.com";
+  a.href = 'http://guarded-journey-2862.herokuapp.com';
   a.target='_blank';
   a.click();
 });

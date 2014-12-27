@@ -25,5 +25,5 @@
                     "*://*.guarded-journey-2862.herokuapp.com/*"
                     ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "0.0.18"
+   "version": "0.0.19"
 }
