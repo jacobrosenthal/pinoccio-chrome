@@ -1,4 +1,6 @@
 chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
+      
+  console.log(msg);
 
   var cmds = {
     getManifest:function(){
@@ -15,9 +17,14 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
     },
     bootload:function(){
+      console.log('bootloading');
       device.bootload(msg.path, msg.url, function(err) {
+        console.log(err);
         var resp = {};
-        if (err) resp.error = err;
+        if (err) {
+          console.log('setting error');
+          resp.error = err;
+        }
         responder(resp);
       });
     },
