@@ -6,8 +6,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       resp.data = chrome.runtime.getManifest();
       responder(resp);
     },
-    setTroop:function(){
-      device.setTroop(msg.path, msg.troop, function(err, data) {
+    configureScout:function(){
+      device.configureScout(msg.path, msg.options, function(err, data) {
         console.log(err, data);
         var resp = {};
         if (err){ resp.error = err.message; }

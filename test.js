@@ -168,7 +168,12 @@ function go(done){
     },
     function(cbStep){
       console.log('setting troop');
-      Device.setTroop(port, troop, cbStep);
+
+      var options = {};
+      options.scoutId = 1;
+      options.troopId = troop.id;
+      options.token = troop.token;
+      Device.configureScout(port, options, cbStep);
     }
   ],
   function(err) {

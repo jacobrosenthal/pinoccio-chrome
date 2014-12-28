@@ -11,14 +11,14 @@ var util = require('util');
   troop object with id and token
   returns error
 */
-function setTroop(port, troop, done){
+function configureScout(port, options, done){
 
   async.series([
 
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'hq.settoken("' + troop.token + '")'
+        cmd: 'hq.settoken("' + options.token + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -27,7 +27,7 @@ function setTroop(port, troop, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.config(1, ' + troop.id + ', 20)'
+        cmd: 'mesh.config(' + options.scoutId +', ' + options.troopId + ', 20)'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -36,7 +36,7 @@ function setTroop(port, troop, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.setkey("' + troop.token.substring(0, 16) + '")'
+        cmd: 'mesh.setkey("' + options.token.substring(0, 16) + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -386,7 +386,7 @@ module.exports = {
   programWifi: programWifi,
   open: open,
   send: send,
-  setTroop: setTroop,
+  configureScout: configureScout,
   bootload:bootload,
   listPorts:listPorts,
   statelessSend:statelessSend

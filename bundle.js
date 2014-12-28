@@ -13,14 +13,14 @@ var util = require('util');
   troop object with id and token
   returns error
 */
-function setTroop(port, troop, done){
+function configureScout(port, options, done){
 
   async.series([
 
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'hq.settoken("' + troop.token + '")'
+        cmd: 'hq.settoken("' + options.token + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -29,7 +29,7 @@ function setTroop(port, troop, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.config(1, ' + troop.id + ', 20)'
+        cmd: 'mesh.config(' + options.scoutId +', ' + options.troopId + ', 20)'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -38,7 +38,7 @@ function setTroop(port, troop, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.setkey("' + troop.token.substring(0, 16) + '")'
+        cmd: 'mesh.setkey("' + options.token.substring(0, 16) + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -388,7 +388,7 @@ module.exports = {
   programWifi: programWifi,
   open: open,
   send: send,
-  setTroop: setTroop,
+  configureScout: configureScout,
   bootload:bootload,
   listPorts:listPorts,
   statelessSend:statelessSend
@@ -463,11 +463,11 @@ if(typeof window === 'undefined') window = this;
     Device.findWifi(port, timeout, done);
   }
 
-  function setTroop(path, troop, done){
+  function configureScout(path, options, done){
     var port = serialPorts[path];
     if (!port) { return done(new Error('Device not open')); }
 
-    Device.setTroop(port, troop, done);
+    Device.configureScout(port, options, done);
   }
 
   function statelessSend(path, options, cmds, done){
@@ -488,7 +488,7 @@ if(typeof window === 'undefined') window = this;
     close: close,
     findWifi: findWifi,
     programWifi: programWifi,
-    setTroop:setTroop,
+    configureScout:configureScout,
     bootload: Device.bootload,
     listAvailablePorts: Device.listPorts,
     listConnectedPorts: listConnectedPorts
@@ -1712,13 +1712,13 @@ module.exports = function (stream, opt, callback) {
 
   stream.write(new Buffer(cmd + '\n'), function (err) {
     if (err) {
-      error = new Error('Error sending ' + cmd + ': ' + err.message);
+      error = new Error('Sending ' + cmd + ': ' + err.message);
       return callback(error);
     }
 
     receiveData(stream, timeout, promptRegex, function (err, data) {
       if (err) {
-        error = new Error('Error sending ' + cmd + ': ' + err.message);
+        error = new Error('Sending ' + cmd + ': ' + err.message);
         return callback(error);
       }
 
@@ -1726,12 +1726,12 @@ module.exports = function (stream, opt, callback) {
 
       //dump the prompt
       if(data.length>=1 && data.pop() !== '> ' ) {
-        error = new Error('Error sending ' + cmd + ': Prompt not at end');
+        error = new Error('Sending ' + cmd + ': Prompt not at end');
         return callback(error);
       }
 
       if(data.length > 0 && data[1] === 'unexpected number'){
-        error = new Error('Error sending ' + cmd + ': Device reports invalid command');
+        error = new Error('Sending ' + cmd + ': Device reports invalid command');
         return callback(error);
       }
 
