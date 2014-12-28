@@ -24,7 +24,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
         console.log(err);
         var resp = {};
         if (err){
-          resp.error = new Error(err.message);
+          resp.error = "error";
         }
         responder(resp);
       });
