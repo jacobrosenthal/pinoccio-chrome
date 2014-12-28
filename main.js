@@ -1,5 +1,7 @@
 chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
-      
+
+  console.log(msg, sender, responder);
+
   var cmds = {
     getManifest:function(){
       var resp = {};
@@ -8,6 +10,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     setTroop:function(){
       device.setTroop(msg.path, msg.troop, function(err, data) {
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -18,6 +21,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     bootload:function(){
       device.bootload(msg.path, msg.url, function(err) {
+        console.log(err);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -27,6 +31,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     listPorts:function(){
       device.listPorts(function(err, data) {
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -37,6 +42,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     send:function(){
       device.send(msg.path, msg.cmds, function(err, data) {
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -48,6 +54,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     //beware, opens its own port
     statelessSend:function(){
       device.statelessSend(msg.path, msg.options, msg.cmds, function(err, data) {
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -58,6 +65,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     programWifi:function(){
       device.programWifi(msg.path, msg.ssid, msg.pass, function(err) {
+        console.log(err);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -67,6 +75,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     findWifi:function(){
       device.findWifi(msg.path, msg.timeout, function(err, data) {
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -77,6 +86,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     open:function(){
       device.open(msg.path, function(err){
+        console.log(err, data);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);
@@ -87,6 +97,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     close:function(){
       device.close(msg.path, function(err){
+        console.log(err);
         var resp = {};
         if (err){
           resp.error = new Error(err.message);

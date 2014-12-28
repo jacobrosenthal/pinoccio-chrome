@@ -10,7 +10,8 @@ if(typeof window === 'undefined') window = this;
   var serialPorts = {};
 
   function open(path, done){
-    //return an error if path already assingned to a port?
+    var existing = serialPorts[path];
+    if (existing) { return done(new Error('Device already open')); }
 
     var options = {baudrate: 115200};
 
