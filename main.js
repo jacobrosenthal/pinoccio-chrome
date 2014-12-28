@@ -12,10 +12,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.setTroop(msg.path, msg.troop, function(err, data) {
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
-        if (data) resp.data = data;
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
         responder(resp);
       });
     },
@@ -23,9 +21,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.bootload(msg.path, msg.url, function(err) {
         console.log(err);
         var resp = {};
-        if (err){
-          resp.error = "error";
-        }
+        if (err){ resp.error = err.message; }
         responder(resp);
       });
     },
@@ -33,10 +29,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.listPorts(function(err, data) {
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
-        if (data) resp.data = data;
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
         responder(resp);
       });
     },
@@ -44,10 +38,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.send(msg.path, msg.cmds, function(err, data) {
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
-        if (data) resp.data = data;
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
         responder(resp);
       });
     },
@@ -56,10 +48,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.statelessSend(msg.path, msg.options, msg.cmds, function(err, data) {
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
-        if (data) resp.data = data;
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
         responder(resp);
       });
     },
@@ -67,9 +57,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.programWifi(msg.path, msg.ssid, msg.pass, function(err) {
         console.log(err);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
+        if (err){ resp.error = err.message; }
         responder(resp);
       });
     },
@@ -77,10 +65,8 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.findWifi(msg.path, msg.timeout, function(err, data) {
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
-        if (data) resp.data = data;
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
         responder(resp);
       });
     },
@@ -88,9 +74,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.open(msg.path, function(err){
         console.log(err, data);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
+        if (err){ resp.error = err.message; }
         responder(resp);
       });
 
@@ -99,9 +83,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       device.close(msg.path, function(err){
         console.log(err);
         var resp = {};
-        if (err){
-          resp.error = new Error(err.message);
-        }
+        if (err){ resp.error = err.message; }
         responder(resp);
       });
     }
