@@ -71,7 +71,6 @@ if(typeof window === 'undefined') window = this;
     Device.setTroop(port, troop, done);
   }
 
-
   function statelessSend(path, options, cmds, done){
     var port = serialPorts[path];
     if (port) { return done(new Error('Device already open')); }

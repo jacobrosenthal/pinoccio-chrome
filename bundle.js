@@ -139,24 +139,23 @@ function statelessSend(path, options, cmds, done){
       return done(err);
     }
 
-    var results;
+    var data;
     var error;
-    var self = this;
 
     port.on('close', function () {
       console.log(path, 'closed');
-      done(self.error, self.results);
+      done(error, data);
     });
 
     port.on('error', function (err) {
       console.log(path, 'closed');
-      self.error = err;
+      error = err;
       port.close();
     });
 
     send(port, cmds, function(err, results){
-      self.error = err;
-      self.results = results;
+      error = err;
+      data = results;
       port.close();
     });
 
@@ -363,6 +362,7 @@ function waitWifi(port, timeout, done){
           return cbStep(err);
         }
 
+        // console.log(results[0]);
         if(results[0].indexOf('"connected":true') > 0){
           connected = true;
         }
@@ -468,7 +468,6 @@ if(typeof window === 'undefined') window = this;
 
     Device.setTroop(port, troop, done);
   }
-
 
   function statelessSend(path, options, cmds, done){
     var port = serialPorts[path];
