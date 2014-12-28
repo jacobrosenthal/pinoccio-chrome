@@ -79,6 +79,10 @@ if(typeof window === 'undefined') window = this;
     Device.statelessSend(path, options, cmds, done);
   }
 
+  function listConnectedPorts(done){
+    done(null, serialPorts);
+  }
+
   window.device = {
     statelessSend: statelessSend,
     open: open,
@@ -88,7 +92,8 @@ if(typeof window === 'undefined') window = this;
     programWifi: programWifi,
     setTroop:setTroop,
     bootload: Device.bootload,
-    listPorts: Device.listPorts
+    listAvailablePorts: Device.listPorts,
+    listConnectedPorts: listConnectedPorts
   };
 
 })(window);

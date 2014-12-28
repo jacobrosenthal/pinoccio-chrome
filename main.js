@@ -1,7 +1,5 @@
 chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 
-  console.log(msg, sender, responder);
-
   var cmds = {
     getManifest:function(){
       var resp = {};
@@ -25,8 +23,17 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
         responder(resp);
       });
     },
-    listPorts:function(){
-      device.listPorts(function(err, data) {
+    listAvailablePorts:function(){
+      device.listAvailablePorts(function(err, data) {
+        console.log(err, data);
+        var resp = {};
+        if (err){ resp.error = err.message; }
+        if (data){ resp.data = data; }
+        responder(resp);
+      });
+    },
+    listConnectedPorts:function(){
+      device.listConnectedPorts(function(err, data) {
         console.log(err, data);
         var resp = {};
         if (err){ resp.error = err.message; }

@@ -477,6 +477,10 @@ if(typeof window === 'undefined') window = this;
     Device.statelessSend(path, options, cmds, done);
   }
 
+  function listConnectedPorts(done){
+    done(null, serialPorts);
+  }
+
   window.device = {
     statelessSend: statelessSend,
     open: open,
@@ -486,7 +490,8 @@ if(typeof window === 'undefined') window = this;
     programWifi: programWifi,
     setTroop:setTroop,
     bootload: Device.bootload,
-    listPorts: Device.listPorts
+    listAvailablePorts: Device.listPorts,
+    listConnectedPorts: listConnectedPorts
   };
 
 })(window);
@@ -1649,7 +1654,7 @@ module.exports = {
 //callback in form of err, array of strings
 module.exports = function (stream, timeout, regexp, callback) {
 
-  var buffer = "";
+  var buffer = '';
   var timeoutId = null;
 
   var handleChunk = function (data) {
@@ -1658,9 +1663,11 @@ module.exports = function (stream, timeout, regexp, callback) {
     // console.log("buffer", buffer);
 
     var found = regexp.test(buffer);
-    if (found) finished(null, buffer)
+    if (found) {
+      finished(null, buffer);
+    }
 
-  }
+  };
 
   var finished = function (err, chunks) {
     if (timeoutId) {
@@ -1669,16 +1676,16 @@ module.exports = function (stream, timeout, regexp, callback) {
     stream.removeListener('data', handleChunk);
     // console.log("returning", chunks);
     callback(err, chunks);
-  }
+  };
 
   if (timeout && timeout > 0) {
     timeoutId = setTimeout(function () {
       timeoutId = null;
-      finished(new Error('timeout'));
+      finished(new Error('receiveData timeout after ' + timeout + 'ms'));
     }, timeout);
   }
   stream.on('data', handleChunk);
-}
+};
 
 },{}],6:[function(require,module,exports){
 (function (Buffer){
@@ -1701,34 +1708,38 @@ module.exports = function (stream, opt, callback) {
   var splitRegex = options.splitRegex || SPLITREGEX;
   var cmd = options.cmd || '';
   var echo = options.echo || false;
+  var error;
 
-  cmd = cmd + "\n";
-
-  // console.log('sending', cmd);
-  stream.write(new Buffer(cmd), function (err) {
+  stream.write(new Buffer(cmd + '\n'), function (err) {
     if (err) {
-      return callback(err);
+      error = new Error('Error sending ' + cmd + ': ' + err.message);
+      return callback(error);
     }
-    // console.log("sent");
+
     receiveData(stream, timeout, promptRegex, function (err, data) {
-      if (err) return callback(err, data);
+      if (err) {
+        error = new Error('Error sending ' + cmd + ': ' + err.message);
+        return callback(error);
+      }
 
       data = data.split(splitRegex);
 
       //dump the prompt
-      if(data.length>=1 && data.pop() !== '> ' ) return callback(new Error('Prompt not at end?'));
-
-      if(data.length > 0 && data[1] === "unexpected number"){
-        return callback(new Error("device reports invalid command"));
+      if(data.length>=1 && data.pop() !== '> ' ) {
+        error = new Error('Error sending ' + cmd + ': Prompt not at end');
+        return callback(error);
       }
 
-      //if echo off dump the command
-      if(data.length>=1 && !echo) data.shift();
+      if(data.length > 0 && data[1] === 'unexpected number'){
+        error = new Error('Error sending ' + cmd + ': Device reports invalid command');
+        return callback(error);
+      }
 
-      // console.log("data", data);
+      //if echo off, dump the command
+      if(data.length>=1 && !echo) { data.shift(); }
 
       //TODO convert to type?
-      callback(err, data);
+      callback(null, data);
     });
   });
 };
