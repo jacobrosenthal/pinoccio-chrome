@@ -72,7 +72,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     open:function(){
       device.open(msg.path, function(err){
-        console.log(err, data);
+        console.log(err);
         var resp = {};
         if (err){ resp.error = err.message; }
         responder(resp);
