@@ -106,8 +106,6 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
 });
 
 chrome.app.runtime.onLaunched.addListener(function(data) {
-  console.log('We launched');
-
   var a = document.createElement('a');
   a.href = 'http://guarded-journey-2862.herokuapp.com';
   a.target='_blank';

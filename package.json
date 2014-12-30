@@ -12,14 +12,19 @@
     "stk500": "jacobrosenthal/js-stk500v1#v2"
   },
   "devDependencies": {
-    "browserify": "^7.0.0",
     "brfs": "^1.2.0",
+    "browserify": "^7.0.0",
+    "del": "^1.1.1",
+    "gulp": "^3.8.10",
+    "gulp-sourcemaps": "^1.3.0",
+    "gulp-util": "^3.0.1",
+    "serialport": "^1.4.9",
     "serialport-transform": "^1.0.2",
-    "serialport": "^1.4.9"
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t brfs -t serialport-transform index.js device.js -o bundle.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jacob Rosenthal"
 }
