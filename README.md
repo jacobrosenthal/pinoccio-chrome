@@ -1,37 +1,15 @@
-##browserdude
-Upload to Arduinos from Chrome.
-
-Currently just a reference implementation of how to browserify [stk500v1](https://www.npmjs.com/package/stk500). Long term we could other programmer support like [Pinoccio's stk500v2](https://github.com/Pinoccio/js-stk500) and whitelist our app so any installed app could utilize our programming functionality to flash an arduino. For now treat as a bootstrap for creating your own Chrome Arduino app.
-
-Currently using [my fork](https://www.npmjs.com/package/chrome-serialport) of [@garrows browser-serialport](https://www.npmjs.com/package/browser-serialport) as it more closely matches [serialport](https://www.npmjs.com/package/serialport).
+##pinoccio-chrome
+Setup your Pinoccio via front end javascript just like the 'hq' app. Uses [Google Chrome Messaging](https://developer.chrome.com/extensions/messaging) to pass data from USB devices to front end code. A replacement for the, currently, unreleased Pinoccio HQ app.
 
 ##INSTALL
+install node modules
+```npm i```
+Then build with gulp
+```gulp```
 Go to chrome://extensions/ and check developer mode in the upper right corner. Then load unpacked extension and choose this directory.
 
 ##RUN
-By default uploads StandardFirmata to the first Uno it can find. Launch the app from your Chrome Apps drawer. With your arduino plugged in, click Program on the window that opens. If you want more debug info, right click and inspect element and open the console tab.
-You can also test in node with:
-```
-npm i serialport
-node index.js /dev/tty.something
-```
+Functionality is very limited out of the box as Chrome's security policy is very strict. Front end javascript can only access USB devices if this application is installed from the Google Chrome App store and if you're on the whitelisted domain listed in the manifest.json. This means until you upload to Chrome App Store as your own app, you can only test available functions attached to window via the extensions background page development console. See index.js for the commands attached to window.
 
-##Make Changes:
-If you make any changes to index.js you'll need to rebuild. Assuming you have node already installed, download and install dependancies with:
-```
-npm install
-```
-Then
-```
-npm run build
-```
-And now you can Reload the extension at chrome://extensions/
-
-###CHANGELOG
-0.0.1
-first
-
-0.1.0
-* move to stk500 1.0.2
-* move to new fork of browser-serialport chrome-serialport with near full compatibility with new browser-serialport
-* switched to browserifying behind the scenes for fs and serialport
+##Make it your own
+Edit main.js and manifest.json and replace my domain, guarded-journey, with your domain. Then see [Google Developer Pages](https://developer.chrome.com/webstore) for how to get your app uploaded. The chrome.js has the functions that interact with this extension, and can be copied to your domain and called from your front end code.
