@@ -68,9 +68,9 @@ function getManifest(done)
     });
 }
 
-function open(path, done)
+function open(path, options, done)
 {
-  chrome.runtime.sendMessage(editorExtensionId, {op: 'open', path: path},
+  chrome.runtime.sendMessage(editorExtensionId, {op: 'open', path: path, options: options},
     function(response) {
       if(chrome.runtime.lastError){
         return done(new Error(chrome.runtime.lastError));
