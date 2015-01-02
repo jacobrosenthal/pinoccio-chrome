@@ -1,9 +1,9 @@
-var async = require('async');
-var util = require('util');
+'use strict';
+
 var Device = require('./device');
 
 // //create a window incase we are running this from node
-if(typeof window === 'undefined') window = this;
+if(typeof window === 'undefined') { var window = this; }
 
 (function() {
 
