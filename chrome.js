@@ -1,5 +1,21 @@
 var editorExtensionId = 'hmeplpidlhmbaagjjkoghlgiphongmmg';
 
+function isInstalled(done)
+{
+  if(typeof chrome.runtime === 'undefined')
+  {
+    return done(new Error('ReVent not installed'));
+  }
+
+  getManifest(function(err, data){
+    if(err){
+      return err;
+    }
+
+    done();
+  });
+}
+
 function configureScout(path, options, done){
 
   chrome.runtime.sendMessage(editorExtensionId, {op: 'configureScout', path: path, options: options},
@@ -211,6 +227,7 @@ function isEmpty(obj){
 }
 
 module.exports = {
+  isInstalled: isInstalled,
   configureScout: configureScout,
   listAvailablePorts: listAvailablePorts,
   listConnectedPorts: listConnectedPorts,
