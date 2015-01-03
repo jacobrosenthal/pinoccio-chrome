@@ -208,7 +208,18 @@ function findWifi(path, timeout, done)
 function parseWifi(list){
   var headings = ['bssid', 'ssid', 'channel', 'type', 'rssi', 'security'];
 
-  list = list.slice(1, list.length-1);
+  var last = list[list.length-1];
+  var resultsRegex = /:([0-9]*)/;
+  
+  var regexed = last.match(resultsRegex);
+
+  var count = 0;
+  if(regexed && regexed.length > 1){
+    count = regexed[1];
+  }
+
+  list = list.slice(list.length-1-count, list.length-1);
+  
   var aps = [];
   list.forEach(function(row) {
     var ap = {};
