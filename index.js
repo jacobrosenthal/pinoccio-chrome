@@ -3,7 +3,7 @@
 var Device = require('./device');
 
 // //create a window incase we are running this from node
-if(typeof window === 'undefined') { var window = this; }
+if(typeof window === 'undefined') { window = this; }
 
 (function() {
 
@@ -99,17 +99,21 @@ if(typeof window === 'undefined') { var window = this; }
 //if we are in node, upload to the supplied port
 if(process && process.argv && process.argv[2] && process.argv[3])
 {
-  var self = this;
-  this.device.open(process.argv[2], function(err){
+  window.device.bootload(process.argv[2], process.argv[3], function(err){
     console.log(err);
-
-    var opt = {
-      timeout: 10000,
-      cmd: process.argv[3]
-    };
-
-    self.device.send(process.argv[2], opt, function(err, data){
-      console.log(err, data);
-    });
   });
-}
+
+  // var self = this;
+  // this.device.open(process.argv[2], function(err){
+  //   console.log(err);
+
+  //   var opt = {
+  //     timeout: 10000,
+  //     cmd: process.argv[3]
+  //   };
+
+  //   self.device.send(process.argv[2], opt, function(err, data){
+  //     console.log(err, data);
+  //   });
+  // });
+};
