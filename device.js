@@ -8,7 +8,7 @@ var util = require('util');
 
 /*
   port open serialport object
-  troop object with id and token
+  troop object with troopId, scoutId and token
   returns error
 */
 function configureScout(port, options, done){
@@ -18,7 +18,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'hq.settoken("' + options.token + '")'
+        cmd: 'hq.settoken("' + options.trooptoken + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -27,7 +27,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.config(' + options.scoutId +', ' + options.troopId + ', 20)'
+        cmd: 'mesh.config(' + options.scoutid + ', ' + options.troopid + ', 20)'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -36,7 +36,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.setkey("' + options.token.substring(0, 16) + '")'
+        cmd: 'mesh.setkey("' + options.trooptoken.substring(0, 16) + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
