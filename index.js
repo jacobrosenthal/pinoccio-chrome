@@ -18,6 +18,12 @@ if(typeof window === 'undefined') { window = this; }
         return done(err);
       }
 
+      port.on('disconnect', function (err) {
+        console.log(path, 'disconnect', err);
+        port.close();
+        delete serialPorts[path];
+      });
+
       port.on('error', function (err) {
         console.log(path, 'error', err);
         port.close();
