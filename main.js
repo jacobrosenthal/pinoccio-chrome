@@ -7,11 +7,10 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       responder(resp);
     },
     configureScout:function(){
-      device.configureScout(msg.path, msg.options, function(err, data) {
-        console.log(err, data);
+      device.configureScout(msg.path, msg.options, function(err) {
+        console.log(err);
         var resp = {};
         if (err){ resp.error = err.message; }
-        if (data){ resp.data = data; }
         responder(resp);
       });
     },
