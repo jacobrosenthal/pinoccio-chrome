@@ -18,7 +18,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'hq.settoken("' + options.trooptoken + '")'
+        cmd: 'hq.settoken("' + options.token + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -27,7 +27,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.config(' + options.scoutid + ', ' + options.troopid + ', 20)'
+        cmd: 'mesh.config(' + options.scoutId + ', ' + options.troopId + ', 20)'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -36,7 +36,7 @@ function configureScout(port, options, done){
     function(cbStep){
       var cmd = {
         timeout: 10000,
-        cmd: 'mesh.setkey("' + options.trooptoken.substring(0, 16) + '")'
+        cmd: 'mesh.setkey("' + options.token.substring(0, 16) + '")'
       };
 
       Bitlash.send(port, cmd, cbStep);
@@ -267,7 +267,7 @@ function findWifi(port, timeout, done){
   var list;
 
   var opt = {
-    timeout: 10000,
+    timeout: (timeout < 20000 ? timeout : 20000),
     cmd: 'wifi.list'
   };
 
