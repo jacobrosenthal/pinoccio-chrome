@@ -102,7 +102,10 @@ function send(port, cmds, done){
           data = [];
         }
         results.push(data);
-        cbStep();
+
+        //found that multitasking of collecting user input can be flaky
+        //as it processes the last command so 1 second delay before sending next command
+        setTimeout(cbStep, 1000);
       });
     },
     function(err) {
