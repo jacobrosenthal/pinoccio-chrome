@@ -52,7 +52,7 @@ if(typeof window === 'undefined') { window = this; }
     var port = serialPorts[path];
     if (!port) { return done(new Error('Device not open')); }
 
-    Device.send(port, cmds, done);
+    Device.send(port, cmds, timeout, done);
   }
 
   function programWifi(path, ssid, pass, done){
@@ -80,7 +80,7 @@ if(typeof window === 'undefined') { window = this; }
     var port = serialPorts[path];
     if (port) { return done(new Error('Device already open')); }
 
-    Device.statelessSend(path, options, cmds, done);
+    Device.statelessSend(path, options, cmds, timeout, done);
   }
 
   function listConnectedPorts(done){
