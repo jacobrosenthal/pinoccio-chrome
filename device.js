@@ -78,7 +78,7 @@ function open(path, options, done){
   cmds command object, or array of command objects to send
   returns error, array of strings, including an empty array if the command has no response
 */
-function send(port, cmds, done){
+function send(port, cmds, timeout, done){
   if (cmds && cmds.constructor !== Array){
     cmds = [cmds];
   }
@@ -105,7 +105,7 @@ function send(port, cmds, done){
 
         //found that multitasking of collecting user input can be flaky
         //as it processes the last command so 1 second delay before sending next command
-        setTimeout(cbStep, 1000);
+        setTimeout(cbStep, timeout);
       });
     },
     function(err) {
@@ -133,7 +133,7 @@ function send(port, cmds, done){
   cmds command object, or array of command objects to send
   returns error, an array of array of strings, including an empty array if the command has no response
 */
-function statelessSend(path, options, cmds, done){
+function statelessSend(path, options, cmds, timeout, done){
 
   open(path, options, function(err, port){
     if(err){
@@ -154,7 +154,7 @@ function statelessSend(path, options, cmds, done){
       port.close();
     });
 
-    send(port, cmds, function(err, results){
+    send(port, cmds, timeout, function(err, results){
       error = err;
       data = results;
       port.close();

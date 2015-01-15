@@ -41,7 +41,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
       });
     },
     send:function(){
-      device.send(msg.path, msg.cmds, function(err, data) {
+      device.send(msg.path, msg.cmds, msg.timeout, function(err, data) {
         console.log(err, data);
         var resp = {};
         if (err){ resp.error = err.message; }
@@ -51,7 +51,7 @@ chrome.runtime.onMessageExternal.addListener(function(msg, sender, responder) {
     },
     //beware, opens its own port
     statelessSend:function(){
-      device.statelessSend(msg.path, msg.options, msg.cmds, function(err, data) {
+      device.statelessSend(msg.path, msg.options, msg.cmds, msg.timeout, function(err, data) {
         console.log(err, data);
         var resp = {};
         if (err){ resp.error = err.message; }

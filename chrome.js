@@ -118,9 +118,9 @@ function close(path, done)
     });
 }
 
-function send(path, cmds, done)
+function send(path, cmds, timeout, done)
 {
-  chrome.runtime.sendMessage(editorExtensionId, {op: 'send', path: path, cmds:cmds},
+  chrome.runtime.sendMessage(editorExtensionId, {op: 'send', path: path, cmds:cmds, timeout:timeout},
     function(response) {
       if(chrome.runtime.lastError){
         return done(new Error(chrome.runtime.lastError.message));
@@ -136,9 +136,9 @@ function send(path, cmds, done)
 }
 
 
-function statelessSend(path, options, cmds, done)
+function statelessSend(path, options, cmds, timeout, done)
 {
-  chrome.runtime.sendMessage(editorExtensionId, {op: 'statelessSend', path: path, options: options, cmds: cmds},
+  chrome.runtime.sendMessage(editorExtensionId, {op: 'statelessSend', path: path, options: options, cmds: cmds, timeout:timeout},
     function(response) {
       if(chrome.runtime.lastError){
         return done(new Error(chrome.runtime.lastError.message));
