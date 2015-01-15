@@ -48,7 +48,7 @@ if(typeof window === 'undefined') { window = this; }
     port.close();
   }
 
-  function send(path, cmds, done){
+  function send(path, cmds, timeout, done){
     var port = serialPorts[path];
     if (!port) { return done(new Error('Device not open')); }
 
@@ -76,7 +76,7 @@ if(typeof window === 'undefined') { window = this; }
     Device.configureScout(port, options, done);
   }
 
-  function statelessSend(path, options, cmds, done){
+  function statelessSend(path, options, cmds, timeout, done){
     var port = serialPorts[path];
     if (port) { return done(new Error('Device already open')); }
 
