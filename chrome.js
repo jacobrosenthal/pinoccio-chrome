@@ -15,7 +15,12 @@ function isInstalled(done)
     done();
   });
 }
-
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+options object
+done callback
+*/
 function configureScout(path, options, done){
 
   chrome.runtime.sendMessage(editorExtensionId, {op: 'configureScout', path: path, options: options},
@@ -33,6 +38,10 @@ function configureScout(path, options, done){
     });
 }
 
+/*
+input
+done callback
+*/
 function listAvailablePorts(done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'listAvailablePorts'},
@@ -50,6 +59,10 @@ function listAvailablePorts(done)
     });
 }
 
+/*
+input
+done callback
+*/
 function listConnectedPorts(done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'listConnectedPorts'},
@@ -67,6 +80,10 @@ function listConnectedPorts(done)
     });
 }
 
+/*
+input
+done callback
+*/
 function getManifest(done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'getManifest'},
@@ -84,6 +101,12 @@ function getManifest(done)
     });
 }
 
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+options object
+done callback
+*/
 function open(path, options, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'open', path: path, options: options},
@@ -101,6 +124,11 @@ function open(path, options, done)
     });
 }
 
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+done callback
+*/
 function close(path, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'close', path: path},
@@ -118,6 +146,13 @@ function close(path, done)
     });
 }
 
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+cmds object or array
+timeout: delay between sending commands
+done callback
+*/
 function send(path, cmds, timeout, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'send', path: path, cmds:cmds, timeout:timeout},
@@ -135,7 +170,14 @@ function send(path, cmds, timeout, done)
     });
 }
 
-
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+options object
+cmds object or array
+timeout: delay between sending commands
+done callback
+*/
 function statelessSend(path, options, cmds, timeout, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'statelessSend', path: path, options: options, cmds: cmds, timeout:timeout},
@@ -153,7 +195,13 @@ function statelessSend(path, options, cmds, timeout, done)
     });
 }
 
-
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+url string 'http://guarded-journey-2862.herokuapp.com/firmware/Bootstrap.cpp.hex'
+cmds object or array
+done callback
+*/
 function bootload(path, url, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'bootload', path: path, url: url},
@@ -171,6 +219,13 @@ function bootload(path, url, done)
     });
 }
 
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+ssid string 'Filthy Worm Babies'
+pass: string 'password'
+done callback
+*/
 function programWifi(path, ssid, pass, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'programWifi', path: path, ssid: ssid, pass: pass},
@@ -188,6 +243,12 @@ function programWifi(path, ssid, pass, done)
     });
 }
 
+/*
+input
+path: string '/dev/tty.usbmodem1411'
+timeout: integer 
+done callback
+*/
 function findWifi(path, timeout, done)
 {
   chrome.runtime.sendMessage(editorExtensionId, {op: 'findWifi', path: path, timeout:timeout},
@@ -205,6 +266,11 @@ function findWifi(path, timeout, done)
     });
 }
 
+/* not sure why yet, but can be of 2 types. So count from the last element instead of the first
+["    IP              SubNet         Gateway   ", " 192.168.1.99:255.255.255.0:192.168.1.1 ", "       BSSID              SSID                     Channel  Type  RSSI Security", " 20:e5:2a:f7:3d:c2, Horatio Cornblower              , 01,  INFRA , -70 , WPA2-PERSONAL", " 06:26:bb:75:a3:bd, lain_1032                       , 11,  INFRA , -48 , WPA2-PERSONAL", " 00:26:bb:75:a3:bd, Filthy Worm Babies              , 11,  INFRA , -48 , WPA2-PERSONAL", "No.Of AP Found:3"]
+or
+"       BSSID              SSID                     Channel  Type  RSSI Security", " c2:9f:db:f1:ba:35, Mill Cue Club MB                , 01,  INFRA , -76 , WPA2-PERSONAL", " be:ae:c5:c3:6b:af, endgame-wifi                    , 06,  INFRA , -52 , WPA-PERSONAL", " bc:ae:c5:c3:6b:ae, endgamewifi                     , 06,  INFRA , -53 , WPA2-PERSONAL", " b0:05:94:c6:d2:f9, PS4-6E61D0A70E17                , 06,  INFRA , -68 , WPA2-PERSONAL", " 30:46:9a:9b:30:40, Ipoos                           , 08,  INFRA , -57 , WEP", "No.Of AP Found:5"
+*/
 function parseWifi(list){
   var headings = ['bssid', 'ssid', 'channel', 'type', 'rssi', 'security'];
 
@@ -232,7 +298,6 @@ function parseWifi(list){
   });
   return aps;
 }
-
 
 module.exports = {
   isInstalled: isInstalled,
