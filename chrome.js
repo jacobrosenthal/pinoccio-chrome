@@ -28,7 +28,7 @@ function configureScout(path, options, done){
         return done(new Error(response.error));
       }
 
-      done(null, response.data);
+      done();
 
     });
 }
