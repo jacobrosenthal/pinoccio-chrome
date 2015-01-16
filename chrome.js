@@ -233,9 +233,6 @@ function parseWifi(list){
   return aps;
 }
 
-function isEmpty(obj){
-  return (Object.getOwnPropertyNames(obj).length === 0);
-}
 
 module.exports = {
   isInstalled: isInstalled,
