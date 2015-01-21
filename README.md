@@ -1,7 +1,7 @@
 #NOTE
-This was modularized into 2 other repos
-*https://github.com/jacobrosenthal/chrome-serialport
-*https://github.com/jacobrosenthal/pinoccio-serial-unofficial
+This was modularized into 2 other repos. Please go there:
+* https://github.com/jacobrosenthal/chrome-serialport
+* https://github.com/jacobrosenthal/pinoccio-serial-unofficial
 
 ##pinoccio-chrome
 Setup your Pinoccio via front end javascript just like the 'hq' app. Uses [Google Chrome Messaging](https://developer.chrome.com/extensions/messaging) to pass data from USB devices to front end code. A replacement for the, currently, unreleased Pinoccio HQ app.
